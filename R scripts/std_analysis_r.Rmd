@@ -1,0 +1,55 @@
+---
+title: "std_anaysis"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+
+library(dplyr)
+library(tidyverse)
+std_data0 <- read.csv("std_data.csv", header = TRUE)
+
+std_data <- as.data.frame(std_data0[,-8:-10]);
+
+std_count <- as.data.frame(unique(std_data$Disease))
+county_count <- as.data.frame(unique(std_data$County))
+year_count <- as.data.frame(unique(std_data$Year))
+sex_count <- as.data.frame(unique(std_data$Sex))
+
+
+
+
+percountylist <- list()
+
+for(county in county_count[,1]){
+  sorted <- std_data %>% filter(County == county)
+  percountylist[[county]] <- sorted
+  
+}
+
+
+ggplot_male <- ggplot( percountylist$California[percountylist$California$Sex == "Male",], aes( x=Year, y=Rate, group = Disease, colour = Disease)) + geom_point();
+
+ggplot_male + ggtitle("Male");
+
+ggplot_female <- ggplot(percountylist$California[percountylist$California$Sex == "Female",], aes( x=Year, y=Rate, group = Disease, colour = Disease)) + geom_point();
+
+ggplot_female + ggtitle("Female");
+
+ggplot_total <-ggplot(percountylist$California[percountylist$California$Sex == "Total",], aes( x=Year, y=Rate, group = Disease, colour = Disease)) + geom_point()
+
+ggplot_total + ggtitle("Total");
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
